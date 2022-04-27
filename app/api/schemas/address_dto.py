@@ -1,6 +1,6 @@
 from typing import Optional
 from unicodedata import name
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, Field
 
 
 class AddressBase(BaseModel):
