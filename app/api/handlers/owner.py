@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
+from app.database.models.user import Owner
 from core.utils import get_db_session
 from core.auth import get_current_active_user
 from database.models.user import User
@@ -24,7 +25,7 @@ def add_address(
 
     address = service.user.add_address(db, address_in)
 
-    return address_in
+    return address
 
 @router.get("/company", response_model=schemas.CompanyResponse)
 def get_company(
@@ -62,11 +63,11 @@ def update_company(
 
 @router.delete("/company/{id}")
 def delete_company(
-    address_id: int = Path(..., title="The id of the company"),
+    company_id: int = Path(..., title="The id of the company"),
     db: Session = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user),
+    current_user: Owner = Depends(get_current_active_user),
 ):
-    address = service.user.delete_address(db, address_id, current_user)
+    address = CompanyOwner.delete_company(db, company_id, current_user)
 
     if not address:
         raise HTTPException(status_code=400, detail="Address does not exists")
