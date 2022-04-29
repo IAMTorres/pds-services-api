@@ -121,7 +121,6 @@ class UserService(SqlAlchemyRepository):
 
 
     def add_contact(self, db: Session, contact: str) -> Contact:
-
         pass
 
     def update_contact(self, db: Session):

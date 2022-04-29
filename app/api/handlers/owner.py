@@ -56,7 +56,7 @@ def update_company(
     company = CompanyOwner.update_company(company_id, db, obj_in, current_user)
 
     if not company:
-        raise HTTPException(status_code=400, detail="Address does not exists")
+        raise HTTPException(status_code=400, detail="Company does not exists")
 
     return company
 
@@ -65,10 +65,10 @@ def update_company(
 def delete_company(
     company_id: int = Path(..., title="The id of the company"),
     db: Session = Depends(get_db_session),
-    current_user: Owner = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     address = CompanyOwner.delete_company(db, company_id, current_user)
 
     if not address:
-        raise HTTPException(status_code=400, detail="Address does not exists")
+        raise HTTPException(status_code=400, detail="Company does not exists")
 
