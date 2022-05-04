@@ -21,7 +21,7 @@ def create_user(
     if user:
         raise HTTPException(
             status_code=400,
-            detail="Email already exists in the sytem,",
+            detail="Email already exists in the system,",
         )
 
     user = service.user.create(db, obj_in=user_in)
@@ -56,7 +56,7 @@ def update_user(
         ):
             raise HTTPException(
                 status_code=400,
-                detail="Email already exists in the sytem,",
+                detail="Email already exists in the system,",
             )
 
     user = service.user.update_user(db, user_in, current_user)

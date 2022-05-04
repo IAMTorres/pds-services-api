@@ -1,31 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
-from app.database.models.user import Owner
 from core.utils import get_db_session
 from core.auth import get_current_active_user
 from database.models.user import User
-import api.service as service
+
 from sqlalchemy.orm import Session
 import api.schemas as schemas
 from api.service.owner_service import CompanyOwner
 
 router = APIRouter()
-
-
-@router.get("/", response_model=schemas.AddressResponse)
-def add_address(
-    address_in: schemas.AddressCreate,
-    db: Session = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user),
-):
-
-    print(current_user)
-
-    if current_user is None:
-        raise HTTPException(status_code=400, detail="User does not exists")
-
-    address = service.user.add_address(db, address_in)
-
-    return address
 
 @router.get("/company", response_model=schemas.CompanyResponse)
 def get_company(

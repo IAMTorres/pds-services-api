@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from database.models.user import User
 from database.repository import SqlAlchemyRepository
 from api.schemas import company_dto
 from database.models.user import Owner
@@ -30,14 +31,14 @@ class CompanyOwner(SqlAlchemyRepository):
         return None
         
 
-    def delete_company(self, db: Session, company_id: int, owner_obj: Owner) -> Company:
+    def delete_company(self, db: Session, company_id: int, owner_obj: User) -> Company:
         if (
             company := db.query(Company)
             .filter(Company.company_id == company_id)
             .first()
         ) is not None:
             for owner_company in owner_obj.owner_id:
-                if owner_company.owner_id == company.owner_id:
+                if owner_company.owner_id == company_id:
                     db.delete(company)
                     db.commit()
                     return company_id

@@ -9,9 +9,7 @@ class CompanyBase(BaseModel):
     name: str | None = Field(None, min_length=4, max_length=45)
 
 
-class CompanyCreate(CompanyBase):
-    company_id: int
-    owner_id: int
+class CompanyCreate(BaseModel):
     name: str = Field(..., min_length=4, max_length=45)
 
 

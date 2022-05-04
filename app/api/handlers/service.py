@@ -16,7 +16,7 @@ def list_services(db: Session = Depends(get_db_session)):
 @router.post("/", response_model=ServiceResponse)
 def create_service(service: ServiceCreate, db: Session = Depends(get_db_session),  
     current_user: User = Depends(get_current_active_user)):
-    return ManagerService.create_service(db=db, service=service, user_id=current_user.user_id)
+    return ManagerService.create_service(db, service, current_user)
 
 @router.put("/{id}", response_model=ServiceResponse)
 def update_service(service: UpdateService,

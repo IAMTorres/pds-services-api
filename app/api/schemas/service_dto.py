@@ -8,10 +8,11 @@ class ServiceBase(BaseModel):
     rating: int | None
     status: str | None = Field(None, min_length=2, max_length=45)
 
-class ServiceCreate(ServiceBase):
-    service_name: str = Field(..., min_length=2, max_length=45)
-    manager_id: int 
-    price: float
+class ServiceCreate(BaseModel):
+    service_name: str | None = Field(None, min_length=2, max_length=45)
+    manager_id: int | None
+    training_plan_id: int | None
+    price: float | None
 
 class UpdateService(ServiceBase):
     pass
