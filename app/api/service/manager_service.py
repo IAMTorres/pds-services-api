@@ -12,9 +12,8 @@ class ManagerService(SqlAlchemyRepository):
 
     def get_service_by_id(db: Session, id: int) -> Optional[Service]:
         return db.query(Service).filter(Service.service_id == id).first()
-
-    @staticmethod
-    def create_service(db: Session, service: service_dto.ServiceCreate, db_obj: User) -> Service:
+        
+    def create_service(self, db: Session, service: service_dto.ServiceCreate, db_obj: User) -> Service:
         obj_in_data = service.dict(exclude_unset=True)
         obj_in_data["user_id"] = db_obj.user_id
         return super().create(db=db, db_obj=Service, obj_in=obj_in_data)
