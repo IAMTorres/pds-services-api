@@ -1,30 +1,49 @@
-from typing import List
-from fastapi import APIRouter, Depends, Path
+from typing import Any, List
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 from api.schemas.service_dto import ServiceCreate, ServiceResponse, UpdateService
 from core.utils import get_db_session
 from core.auth import get_current_active_user
 from database.models.user import User
-from api.service.manager_service import ManagerService
+import api.service as service
 
 router = APIRouter()
 
 @router.get("/", response_model=List[ServiceResponse])
 def list_services(db: Session = Depends(get_db_session)):
-    return ManagerService.get_service_all(db=db)
+    return service.manager.get_service_all(db)
 
 @router.post("/", response_model=ServiceResponse)
-def create_service(service: ServiceCreate, db: Session = Depends(get_db_session),  
+def create_service(service_in: ServiceCreate, db: Session = Depends(get_db_session),  
     current_user: User = Depends(get_current_active_user)):
-    return ManagerService.create_service(db, service, current_user)
 
-@router.put("/{id}", response_model=ServiceResponse)
-def update_service(service: UpdateService,
-    id: int = Path(..., title="The id of the service"),
+    manager_in = service.user.verify_manager_id(db=db, id=service_in.manager_id)
+    if manager_in:
+        return service.manager.create_service(db=db, service=service_in, db_obj=current_user)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Manager does not exists",)
+
+    
+@router.put("/", response_model=ServiceResponse)
+def update_service(service_in: UpdateService,
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user)):
-    return ManagerService.update_service(db=db, service=service,id=id, user_id=current_user.user_id)
+
+    manager = service.manager.update_service(db=db, service=service_in, db_obj=current_user)
+    if not manager:
+        raise HTTPException(
+            status_code=400,
+            detail="Service does not exists",)
 
 @router.delete("/{id}")
-def delete_service(db: Session = Depends(get_db_session), id: int = int):
-    return ~ManagerService.delete_service(db=db, id=id)
+def delete_service(
+    id: int = Path(..., title="The id of the service"),
+    db: Session = Depends(get_db_session),
+    current_user: User = Depends(get_current_active_user),
+):
+    service_in = service.manager.delete_service(db, id, current_user)
+
+    if not service_in:
+        raise HTTPException(status_code=400, detail="Service does not exists")

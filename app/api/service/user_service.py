@@ -37,6 +37,10 @@ class UserService(SqlAlchemyRepository):
         return db.query(Manager).filter(Manager.user_id == id).first()
 
     @staticmethod
+    def verify_manager_id(db: Session, id: Any) -> Optional[Manager]:
+        return db.query(Manager).filter(Manager.manager_id == id).first()
+
+    @staticmethod
     def get_role(db: Session, role: Any) -> Optional[Role]:
         return db.query(Role).filter(Role.name == role).first()
 

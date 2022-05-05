@@ -11,9 +11,7 @@ class ServiceCategory(Base):
 
 class Service(Base):
     service_id = Column(Integer, primary_key=True)
-    service_name = Column(VARCHAR(45), nullable=False, unique=True )
     manager_id = Column(Integer, ForeignKey("manager.manager_id"), nullable=False)
-    price = Column(DECIMAL(3, 2), nullable=False, default=0)
     user_id = Column(Integer, ForeignKey("user.user_id"), nullable=False)
     training_plan_id = Column(
         Integer, ForeignKey("training_plan.training_plan_id"), nullable=False
