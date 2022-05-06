@@ -31,7 +31,7 @@ def update_service(service_in: UpdateService,
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user)):
 
-    manager = service.manager.update_service(db=db, service=service_in, db_obj=current_user)
+    manager = service.manager.update_service(db=db, service_in=service_in, db_obj=current_user)
     if not manager:
         raise HTTPException(
             status_code=400,

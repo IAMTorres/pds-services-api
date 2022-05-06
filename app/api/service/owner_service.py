@@ -29,17 +29,15 @@ class CompanyOwner(SqlAlchemyRepository):
         return None
         
 
-    def delete_company(self, db: Session, company_id: int, owner_obj: User) -> Company:
+    def delete_company(self, db: Session, company_id: int, user_obj: User) -> Company:
         if (
             company := db.query(Company)
             .filter(Company.company_id == company_id)
             .first()
         ) is not None:
-            for owner_company in owner_obj.owner_id:
-                if owner_company.owner_id == company_id:
-                    db.delete(company)
-                    db.commit()
-                    return company_id
+                db.delete(company)
+                db.commit()
+                return company_id
         return None
 
 

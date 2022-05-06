@@ -22,16 +22,16 @@ class ManagerService(SqlAlchemyRepository):
 
 
     def update_service(
-        self, db: Session, service: service_dto.UpdateService, db_obj: User
+        self, db: Session, service_in: service_dto.UpdateService, db_obj: User
     ) -> Service:
         if (
             service := db.query(Service)
-            .filter(Service.service_id == service.service_id)
+            .filter(Service.service_id == service_in.service_id)
             .first()
         ) is not None:
-                obj_in_data = service.dict(exclude_unset=True)
+                obj_in_data = service_in.dict(exclude_unset=True)
                 obj_in_data["user_id"] = db_obj.user_id
-                return super().update(db=db, db_obj=Service, obj_in=obj_in_data)
+                return super().update(db=db, db_obj=service, obj_in=obj_in_data)
         return None
         
 

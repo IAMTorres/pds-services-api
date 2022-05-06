@@ -14,7 +14,7 @@ class CompanyCreate(BaseModel):
 
 class CompanyUpdate(CompanyBase):
     company_id: int
-
+    name: str
 
 class CompanyResponse(CompanyBase):
     class Config:

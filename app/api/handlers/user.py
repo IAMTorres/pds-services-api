@@ -107,7 +107,8 @@ def delete_address(
     if not address:
         raise HTTPException(status_code=400, detail="Address does not exists")
 
-@router.get("/contact", response_model=schemas.AddressResponse)
+
+@router.get("/contact", response_model=schemas.ContactResponse)
 def get_contact(
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
@@ -116,19 +117,19 @@ def get_contact(
     pass
 
 
-@router.post("/address", response_model=schemas.AddressResponse)
-def add_address(
-    obj_in: schemas.AddressCreate,
+@router.post("/contact", response_model=schemas.ContactResponse)
+def add_contact(
+    obj_in: schemas.ContactCreate,
     db: Session = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user),
+    
 ):
-    address = service.user.add_address(db, obj_in, current_user)
-    return address
+    contact = service.user.add_contact(db, obj_in)
+    return contact
 
 
-@router.put("/address", response_model=schemas.AddressResponse)
+@router.put("/address", response_model=schemas.ContactResponse)
 def update_address(
-    obj_in: schemas.AddressUpdate,
+    obj_in: schemas.ContactUpdate,
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
 ):
