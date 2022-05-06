@@ -20,12 +20,12 @@ class CompanyOwner(SqlAlchemyRepository):
         self, db: Session, company_in: company_dto.CompanyUpdate, db_obj: User
     ) -> Company:
         if (
-            company_in := db.query(Company)
+            company := db.query(Company)
             .filter(Company.company_id == company_in.company_id)
             .first()
         ) is not None:
                 obj_in_data = company_in.dict(exclude_unset=True)
-                return super().update(db=db, db_obj=company_in, obj_in=obj_in_data)
+                return super().update(db=db, db_obj=company, obj_in=obj_in_data)
         return None
         
 
