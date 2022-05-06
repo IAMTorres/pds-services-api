@@ -128,27 +128,27 @@ def add_contact(
     return contact
 
 
-@router.put("/address", response_model=schemas.ContactResponse)
+@router.put("/contact", response_model=schemas.ContactResponse)
 def update_address(
     obj_in: schemas.ContactUpdate,
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
 ):
-    address = service.user.update_address(db, obj_in, current_user)
+    contact = service.user.update_contact(db, obj_in, current_user)
 
-    if not address:
-        raise HTTPException(status_code=400, detail="Address does not exists")
+    if not contact:
+        raise HTTPException(status_code=400, detail="Contact does not exists")
 
-    return address
+    return contact
 
 
-@router.delete("/address/{id}")
+@router.delete("/contact/{id}")
 def delete_address(
-    address_id: int = Path(..., title="The id of the address"),
+    contact_id: int = Path(..., title="The id of the contact"),
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
 ):
-    address = service.user.delete_address(db, address_id, current_user)
+    contact = service.user.delete_contact(db, contact_id, current_user)
 
-    if not address:
-        raise HTTPException(status_code=400, detail="Address does not exists")
+    if not contact:
+        raise HTTPException(status_code=400, detail="Contact does not exists")
