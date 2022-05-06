@@ -1,20 +1,19 @@
-from typing import Optional
-from unicodedata import name
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, Field
 
 
 class CompanyBase(BaseModel):
     company_id: int | None
     owner_id: int | None
-    name: str | None = Field(None, min_length=4, max_length=45)
+    name: str | None = Field(None, min_length=2, max_length=45)
 
 
 class CompanyCreate(BaseModel):
-    name: str = Field(..., min_length=4, max_length=45)
+    owner_id: int
+    name: str = Field(..., min_length=2, max_length=45)
 
 
 class CompanyUpdate(CompanyBase):
-    pass
+    company_id: int
 
 
 class CompanyResponse(CompanyBase):

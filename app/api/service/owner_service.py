@@ -7,27 +7,25 @@ from database.models.company import Company
 
 class CompanyOwner(SqlAlchemyRepository):
 
-    def get_company_all(db: Session):
-            return db.query(Company).all()
+    def get_company_all(self, db: Session, user_obj: User):
+        return db.query(Company).all()
 
-    def create_company(self, db: Session, company: company_dto.CompanyCreate, owner_id: int):
-        obj_in_data = company.dict(exclude_unset=True)
-        obj_in_data["owner_id"] = owner_id
+    def create_company(
+        self, db: Session, company_in: company_dto.CompanyCreate, db_obj: User
+    ) -> Company:
+        obj_in_data = company_in.dict(exclude_unset=True)
         return super().create(db=db, db_obj=Company, obj_in=obj_in_data)
 
     def update_company(
-        self, id: int, db: Session, company: company_dto.CompanyUpdate, owner_obj: Owner
+        self, db: Session, company_in: company_dto.CompanyUpdate, db_obj: User
     ) -> Company:
         if (
-            company := db.query(Company)
-            .filter(Company.company_id == id)
+            company_in := db.query(Company)
+            .filter(Company.company_id == company_in.company_id)
             .first()
         ) is not None:
-            for owner_company in owner_obj.owner_id:
-                if owner_company.owner_id == company.owner_id:
-                    obj_in_data = company.dict(exclude_unset=True)
-                    obj_in_data = company["owner_id"] = owner_obj.owner_id
-                    return super().update(db, db_obj=company, obj_in=obj_in_data)
+                obj_in_data = company_in.dict(exclude_unset=True)
+                return super().update(db=db, db_obj=company_in, obj_in=obj_in_data)
         return None
         
 
@@ -45,4 +43,4 @@ class CompanyOwner(SqlAlchemyRepository):
         return None
 
 
-company_owner = CompanyOwner()
+owner = CompanyOwner()

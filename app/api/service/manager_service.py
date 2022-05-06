@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional
 from sqlalchemy.orm import Session
 from database.repository import SqlAlchemyRepository
 from database.models.service import Service
