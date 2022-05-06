@@ -9,7 +9,13 @@ class ContactBase(BaseModel):
 
 class ContactCreate(ContactBase):
     contact_type: str
-    number: str = Field(..., min_length=9, max_length=12)
+    number: str = Field(
+        ...,
+        min_length=9,
+        max_length=12,
+        regex="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$",
+        description="The number must be greater than zero",
+    )
 
 
 class ContactUpdate(ContactBase):
