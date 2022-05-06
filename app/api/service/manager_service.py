@@ -29,22 +29,24 @@ class ManagerService(SqlAlchemyRepository):
             .filter(Service.service_id == service_in.service_id)
             .first()
         ) is not None:
-            is_manager = service.user.get_manager_by_user_id(db, db_obj.user_id)
-            if is_manager == service_in.manager_id:
-                obj_in_data = service_in.dict(exclude_unset=True)
-                obj_in_data["user_id"] = db_obj.user_id
-                return super().update(db=db, db_obj=services, obj_in=obj_in_data)
+            if (manager := service.user.get_manager_by_user_id(db, db_obj.user_id)) is not None:
+                if manager.manager_id == services.manager_id:
+                    obj_in_data = service_in.dict(exclude_unset=True)
+                    obj_in_data["user_id"] = db_obj.user_id
+                    return super().update(db=db, db_obj=services, obj_in=obj_in_data)
         return None
 
     def delete_service(self, db: Session, service_id: int, user_obj: User) -> Service:
         if (
-            service := db.query(Service)
+            services := db.query(Service)
             .filter(Service.service_id == service_id)
             .first()
         ) is not None:
-            db.delete(service)
-            db.commit()
-            return service_id
+            if (manager := service.user.get_manager_by_user_id(db, user_obj.user_id)) is not None:
+                if manager.manager_id == services.manager_id:
+                    db.delete(services)
+                    db.commit()
+                    return service_id
         return None
 
 
