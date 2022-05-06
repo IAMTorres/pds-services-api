@@ -10,10 +10,11 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
+
 @router.get("/company", response_model=List[CompanyResponse])
 def get_company(
     db: Session = Depends(get_db_session),
-    current_user: Owner = Depends(get_current_active_user)
+    current_user: Owner = Depends(get_current_active_user),
 ):
     return service.owner.get_company_all(db, current_user)
 
@@ -52,4 +53,3 @@ def delete_company(
 
     if not address:
         raise HTTPException(status_code=400, detail="Company does not exists")
-

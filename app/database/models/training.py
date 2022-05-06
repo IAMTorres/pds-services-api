@@ -9,8 +9,23 @@ from sqlalchemy import (
     TIME,
     DATE,
     JSON,
+    Table,
 )
+from sqlalchemy.orm import relationship
 from .base_model import Base
+
+
+TrainingService = Table(
+    "training_service",
+    Base.metadata,
+    Column("service_id", Integer, ForeignKey("service.service_id"), nullable=False),
+    Column(
+        "training_plan_id",
+        Integer,
+        ForeignKey("training_plan.training_plan_id"),
+        nullable=False,
+    ),
+)
 
 
 class TrainingCategory(Base):
@@ -25,6 +40,7 @@ class TrainingPlan(Base):
     training_plan_category = Column(
         Integer, ForeignKey("training_category.training_category_id"), nullable=False
     )
+    manager_id = Column(Integer, ForeignKey("manager.manager_id"), nullable=False)
     expiration_date = Column(DATE, nullable=False)
     price = Column(DECIMAL(4, 2), nullable=False)
     description = Column(VARCHAR(200), nullable=False)
@@ -32,6 +48,7 @@ class TrainingPlan(Base):
     status = Column(BOOLEAN, nullable=False, default=True)
     number_of_sessions = Column(Integer, nullable=True)
     description = Column(VARCHAR(200), nullable=True)
+    services = relationship("Service", secondary=TrainingService)
 
 
 class Session(Base):

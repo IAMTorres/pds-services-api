@@ -90,10 +90,8 @@ class UserService(SqlAlchemyRepository):
         obj_in_data["user_id"] = db_obj.user_id
         return super().create(db=db, db_obj=Address, obj_in=obj_in_data)
 
-    def get_address(
-        self, db: Session, user_obj: User
-    ) -> Address:
-        pass    
+    def get_address(self, db: Session, user_obj: User) -> Address:
+        pass
 
     def delete_address(self, db: Session, address_id: int, user_obj: User) -> Address:
         if (
@@ -122,7 +120,6 @@ class UserService(SqlAlchemyRepository):
                     obj_in_data = address["user_id"] = user_obj.user_id
                     return super().update(db, db_obj=address, obj_in=obj_in_data)
         return None
-
 
     def add_contact(self, db: Session, contact: str) -> Contact:
         pass

@@ -9,33 +9,47 @@ import api.service as service
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[ServiceResponse])
 def list_services(db: Session = Depends(get_db_session)):
     return service.manager.get_service_all(db)
 
+
 @router.post("/", response_model=ServiceResponse)
-def create_service(service_in: ServiceCreate, db: Session = Depends(get_db_session),  
-    current_user: User = Depends(get_current_active_user)):
+def create_service(
+    service_in: ServiceCreate,
+    db: Session = Depends(get_db_session),
+    current_user: User = Depends(get_current_active_user),
+):
 
     manager_in = service.user.verify_manager_id(db=db, id=service_in.manager_id)
     if manager_in:
-        return service.manager.create_service(db=db, service=service_in, db_obj=current_user)
+        return service.manager.create_service(
+            db=db, service=service_in, db_obj=current_user
+        )
     else:
         raise HTTPException(
             status_code=400,
-            detail="Manager does not exists",)
+            detail="Manager does not exists",
+        )
 
-    
+
 @router.put("/", response_model=ServiceResponse)
-def update_service(service_in: UpdateService,
+def update_service(
+    service_in: UpdateService,
     db: Session = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user)):
+    current_user: User = Depends(get_current_active_user),
+):
 
-    manager = service.manager.update_service(db=db, service_in=service_in, db_obj=current_user)
+    manager = service.manager.update_service(
+        db=db, service_in=service_in, db_obj=current_user
+    )
     if not manager:
         raise HTTPException(
             status_code=400,
-            detail="Service does not exists",)
+            detail="Service does not exists",
+        )
+
 
 @router.delete("/{id}")
 def delete_service(

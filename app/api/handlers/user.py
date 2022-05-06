@@ -67,7 +67,8 @@ def update_user(
 def get_address(
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
-    page_num: int = 1, page_size: int = 10
+    page_num: int = 1,
+    page_size: int = 10,
 ):
     pass
 
@@ -112,7 +113,8 @@ def delete_address(
 def get_contact(
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_active_user),
-    page_num: int = 1, page_size: int = 10
+    page_num: int = 1,
+    page_size: int = 10,
 ):
     pass
 
@@ -121,7 +123,6 @@ def get_contact(
 def add_contact(
     obj_in: schemas.ContactCreate,
     db: Session = Depends(get_db_session),
-    
 ):
     contact = service.user.add_contact(db, obj_in)
     return contact
