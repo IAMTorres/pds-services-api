@@ -118,14 +118,37 @@ class UserService(SqlAlchemyRepository):
                     return super().update(db, db_obj=address, obj_in=obj_in_data)
         return None
 
-    def add_contact(self, db: Session, contact: str) -> Contact:
-        pass
+    def add_contact(
+        self, db: Session, contact: schemas.ContactCreate, db_obj: User
+    ) -> Contact:
+        obj_in_data = contact.dict(exclude_unset=True)
+        obj_in_data["user_id"] = db_obj.user_id
+        return super().create(db=db, db_obj=Contact, obj_in=obj_in_data)
 
-    def update_contact(self, db: Session):
-        pass
 
-    def delete_contact(self, db: Session):
-        pass
+    def update_contact(
+        self, db: Session, contact_in: schemas.ContactUpdate, user_obj: User
+    ) -> Contact:
+        if (
+            contact := db.query(Contact)
+            .filter(Contact.contact_id == contact_in.contact_id)
+            .first()
+        ) is not None:
+            obj_in_data = contact_in.dict(exclude_unset=True)
+            obj_in_data["user_id"] = user_obj.user_id
+            return super().update(db, db_obj=contact, obj_in=obj_in_data)
+        return None
+
+    def delete_contact(self, db: Session, contact_id: int, user_obj: User) -> Contact:
+        if (
+            contact := db.query(Contact)
+            .filter(Contact.contact_id == contact_id)
+            .first()
+        ) is not None:
+            db.delete(contact)
+            db.commit()
+            return contact_id
+        return None
 
     def activate_role(self, db: Session, role: str, user_obj: User) -> User:
         roles = [role for role in user_obj.roles]
