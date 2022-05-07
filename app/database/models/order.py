@@ -32,7 +32,7 @@ class Invoice(Base):
     invoice_id = Column(Integer, primary_key=True)
     payment_category = Column(ENUM(PaymentCategory), nullable=False)
     total = Column(DECIMAL(4, 2), nullable=False, index=True)
-    managers = relationship("Order", secondary=InvoiceOrder, back_populates="invoice")
+    #managers = relationship("Order", secondary=InvoiceOrder, back_populates="invoice")
 
 
 class Order(Base):
@@ -45,7 +45,7 @@ class Order(Base):
     amount_discounted = Column(DECIMAL(4, 2), nullable=False)
     payment_date = Column(DATETIME, nullable=True)
     status = Column(BOOLEAN, nullable=False, default=False)
-    invoices = relationship("Invoice", secondary=InvoiceOrder, back_populates="order")
+    #invoices = relationship("Invoice", secondary=InvoiceOrder, back_populates="order")
 
 
 class PricingPolicy(Base):
