@@ -32,15 +32,15 @@ def check_category(category) -> int:
 
 
 class TrainingBase(BaseModel):
-    training_plan_category_id: int | None
+    training_plan_category: int | None
     price: float | None
     description: str | None = Field(None, min_length=4, max_length=45)
-    expiration_date: date
+    expiration_date: date | None
     details: Json | None
     number_of_sessions: int | None
     notes: str | None
 
-    @validator("training_plan_category_id")
+    @validator("training_plan_category")
     def check_category(cls, v):
         if v is None:
             return v
@@ -50,16 +50,17 @@ class TrainingBase(BaseModel):
 
 
 class TraningCreate(TrainingBase):
-    training_plan_category_id: int
+    training_plan_category: int
     price: float
     description: str = Field(None, min_length=4, max_length=200)
-    details: Json
 
 
 class TraningUpdate(TrainingBase):
-    pass
+    training_plan_id: int
 
 
 class TrainingResponse(TrainingBase):
+    training_plan_id: int | None
+
     class Config:
         orm_mode = True

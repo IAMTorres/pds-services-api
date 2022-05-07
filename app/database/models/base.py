@@ -5,5 +5,5 @@ from app.database.models.contact import Contact
 from app.database.models.company import Company, CompanyManager
 from app.database.models.user import User, Owner, Manager, Role, Permission
 from app.database.models.service import ServiceCategory, Service
-from app.database.models.training import TrainingPlan, TrainingCategory, Session
+from app.database.models.training import TrainingPlan, TrainingCategory, Session, TrainingService
 from app.database.models.order import Order, InvoiceOrder, Invoice, PricingPolicy

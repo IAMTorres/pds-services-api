@@ -12,8 +12,8 @@ from sqlalchemy import (
     Table,
 )
 from sqlalchemy.orm import relationship
+from .service import Service
 from .base_model import Base
-
 
 TrainingService = Table(
     "training_service",
@@ -41,7 +41,7 @@ class TrainingPlan(Base):
         Integer, ForeignKey("training_category.training_category_id"), nullable=False
     )
     manager_id = Column(Integer, ForeignKey("manager.manager_id"), nullable=False)
-    expiration_date = Column(DATE, nullable=False)
+    expiration_date = Column(DATE, nullable=True)
     price = Column(DECIMAL(4, 2), nullable=False)
     description = Column(VARCHAR(200), nullable=False)
     details = Column(JSON, nullable=True)

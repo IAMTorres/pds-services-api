@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, BOOLEAN, DECIMAL
 from .base_model import Base
-from .training import TrainingPlan
 
 
 class ServiceCategory(Base):
@@ -21,3 +20,4 @@ class Service(Base):
     )
     rating = Column(DECIMAL(3, 2), nullable=True, default=0)
     status = Column(BOOLEAN, nullable=False, default=False)
+

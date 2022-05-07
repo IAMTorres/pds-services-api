@@ -1,7 +1,4 @@
-from sqlite3 import adapt
-from tkinter.messagebox import NO
 from database.repository import SqlAlchemyRepository
-from fastapi.encoders import jsonable_encoder
 from core.auth import get_password_hash, verify_password
 from database.models.user import User, Owner, Manager, Role, ManagerCategory
 from database.models.address import Address
@@ -145,6 +142,56 @@ class UserService(SqlAlchemyRepository):
                 if user_role.name != deleted_role.name
             ]
         return user_obj
+
+    
+    def activate_owner(self, db: Session, user_obj: User) -> None:
+        if (owner := self.get_owner_by_user_id(db, user_obj.user_id)) is not None:
+            if owner.active is False:
+                owner.active = True
+                db.add(owner)
+        else:
+            owner = Owner(user_id=user_obj.user_id)
+            db.add(owner)
+
+        user_obj = self.activate_role(db, "owner", user_obj)
+        db.add(user_obj)
+        db.commit()
+
+    def deactivate_owner(self, db: Session, user_obj: User) -> None:
+        if (owner := self.get_owner_by_user_id(db, user_obj.user_id)) is not None:
+            if owner.active is True:
+                owner.active = False
+                db.add(owner)
+
+                user_obj = self.deactivate_role(db, "owner", user_obj)
+                db.add(user_obj)
+                db.commit()
+
+    def activate_manager(self, db: Session, user_obj: User) -> User:
+        if (manager := self.get_manager_by_user_id(db, user_obj.user_id)) is not None:
+            if manager.active is False:
+                manager.active = True
+                db.add(manager)
+        else:
+            manager = Owner(user_id=user_obj.user_id)
+            db.add(manager)
+
+        user_obj = self.activate_role(db, "manager", user_obj)
+        db.add(user_obj)
+        db.commit()
+
+    def deactivate_manager(self, db: Session, user_obj: User) -> User:
+        if (manager := self.get_manager_by_user_id(db, user_obj.user_id)) is not None:
+            if manager.active is True:
+                manager.active = False
+                db.add(manager)
+                user_obj = self.deactivate_role(db, "manager", user_obj)
+
+   
+            user_obj = self.deactivate_role(db, "owner", user_obj)
+            db.add(user_obj)
+            db.commit()
+    
 
     # TODO expirar sessao depois de atualizar campos de alteracao de tipo de usuario / refatorar if em metodos
     def update_user(
