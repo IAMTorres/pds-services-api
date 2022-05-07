@@ -123,8 +123,9 @@ def get_contact(
 def add_contact(
     obj_in: schemas.ContactCreate,
     db: Session = Depends(get_db_session),
+    current_user: User = Depends(get_current_active_user),
 ):
-    contact = service.user.add_contact(db, obj_in)
+    contact = service.user.add_contact(db, obj_in, current_user)
     return contact
 
 
