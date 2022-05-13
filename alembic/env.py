@@ -30,10 +30,10 @@ target_metadata = Base.metadata
 
 
 def get_uri() -> str:
-    user = os.environ.get('DB_USER', 'root')
+    user = os.environ.get('DB_USER', 'Jocause')
     host = os.environ.get('DB_HOST', 'localhost')
     db_name = os.environ.get('DB_NAME', 'softly')
-    password = os.environ.get('DB_PASSWORD', 'zeca1234')
+    password = os.environ.get('DB_PASSWORD', 'Jw19072014')
     port = 3306 if host == 'localhost' else 33060
     return f"mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}"
 

@@ -1,8 +1,8 @@
-"""migration todas tabelas
+"""Added initial tables
 
-Revision ID: 2a037a7e0e63
+Revision ID: 421cf0da30f6
 Revises: 
-Create Date: 2022-04-10 21:22:40.898523
+Create Date: 2022-05-07 09:59:39.109359
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2a037a7e0e63'
+revision = '421cf0da30f6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -140,6 +140,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('manager_category_id', sa.Integer(), nullable=False),
     sa.Column('rating', sa.DECIMAL(precision=3, scale=2), nullable=True),
+    sa.Column('active', sa.BOOLEAN(), nullable=False),
     sa.ForeignKeyConstraint(['manager_category_id'], ['manager_category.manager_category_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], ),
     sa.PrimaryKeyConstraint('manager_id')
@@ -150,6 +151,7 @@ def upgrade():
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('active', sa.BOOLEAN(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], ),
     sa.PrimaryKeyConstraint('owner_id')
     )
@@ -159,20 +161,6 @@ def upgrade():
     sa.Column('permission_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['permission_id'], ['permission.permission_id'], ),
     sa.ForeignKeyConstraint(['role_id'], ['role.role_id'], )
-    )
-    op.create_table('training_plan',
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('training_plan_id', sa.Integer(), nullable=False),
-    sa.Column('training_plan_category', sa.Integer(), nullable=False),
-    sa.Column('expiration_date', sa.DATE(), nullable=False),
-    sa.Column('price', sa.DECIMAL(precision=4, scale=2), nullable=False),
-    sa.Column('details', sa.JSON(), nullable=True),
-    sa.Column('status', sa.BOOLEAN(), nullable=False),
-    sa.Column('number_of_sessions', sa.Integer(), nullable=True),
-    sa.Column('description', sa.VARCHAR(length=200), nullable=True),
-    sa.ForeignKeyConstraint(['training_plan_category'], ['training_category.training_category_id'], ),
-    sa.PrimaryKeyConstraint('training_plan_id')
     )
     op.create_table('user_role',
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -190,6 +178,28 @@ def upgrade():
     sa.PrimaryKeyConstraint('company_id')
     )
     op.create_index(op.f('ix_company_name'), 'company', ['name'], unique=False)
+    op.create_table('training_plan',
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('training_plan_id', sa.Integer(), nullable=False),
+    sa.Column('training_plan_category', sa.Integer(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=False),
+    sa.Column('expiration_date', sa.DATE(), nullable=True),
+    sa.Column('price', sa.DECIMAL(precision=4, scale=2), nullable=False),
+    sa.Column('details', sa.JSON(), nullable=True),
+    sa.Column('status', sa.BOOLEAN(), nullable=False),
+    sa.Column('number_of_sessions', sa.Integer(), nullable=True),
+    sa.Column('description', sa.VARCHAR(length=200), nullable=True),
+    sa.ForeignKeyConstraint(['manager_id'], ['manager.manager_id'], ),
+    sa.ForeignKeyConstraint(['training_plan_category'], ['training_category.training_category_id'], ),
+    sa.PrimaryKeyConstraint('training_plan_id')
+    )
+    op.create_table('company_manager',
+    sa.Column('manager_id', sa.Integer(), nullable=False),
+    sa.Column('company_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['company_id'], ['company.company_id'], ),
+    sa.ForeignKeyConstraint(['manager_id'], ['manager.manager_id'], )
+    )
     op.create_table('service',
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
@@ -216,12 +226,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['training_plan_id'], ['training_plan.training_plan_id'], ),
     sa.PrimaryKeyConstraint('session_id')
     )
-    op.create_table('company_manager',
-    sa.Column('manager_id', sa.Integer(), nullable=False),
-    sa.Column('company_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['company_id'], ['company.company_id'], ),
-    sa.ForeignKeyConstraint(['manager_id'], ['manager.manager_id'], )
-    )
     op.create_table('order',
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
@@ -236,6 +240,12 @@ def upgrade():
     sa.ForeignKeyConstraint(['service_id'], ['service.service_id'], ),
     sa.PrimaryKeyConstraint('order_id')
     )
+    op.create_table('training_service',
+    sa.Column('service_id', sa.Integer(), nullable=False),
+    sa.Column('training_plan_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['service_id'], ['service.service_id'], ),
+    sa.ForeignKeyConstraint(['training_plan_id'], ['training_plan.training_plan_id'], )
+    )
     op.create_table('invoice_order',
     sa.Column('invoice_id', sa.Integer(), nullable=False),
     sa.Column('order_id', sa.Integer(), nullable=False),
@@ -248,14 +258,15 @@ def upgrade():
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('invoice_order')
+    op.drop_table('training_service')
     op.drop_table('order')
-    op.drop_table('company_manager')
     op.drop_table('session')
     op.drop_table('service')
+    op.drop_table('company_manager')
+    op.drop_table('training_plan')
     op.drop_index(op.f('ix_company_name'), table_name='company')
     op.drop_table('company')
     op.drop_table('user_role')
-    op.drop_table('training_plan')
     op.drop_table('role_permission')
     op.drop_index(op.f('ix_owner_owner_id'), table_name='owner')
     op.drop_table('owner')
