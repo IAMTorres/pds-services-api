@@ -70,13 +70,13 @@ class UserBase(BaseModel):
             raise ValueError("invalid nif")
         return v
 
-    @validator("category")
-    def check_category(cls, v):
-        if v is None:
-            return v
-        if check_category(v) is None:
-            raise ValueError("invalid category")
-        return v
+    # @validator("category")
+    # def check_category(cls, v):
+    #     if v is None:
+    #         return v
+    #     if check_category(v) is None:
+    #         raise ValueError("invalid category")
+    #     return v
 
 
 class UserCreate(UserBase):
